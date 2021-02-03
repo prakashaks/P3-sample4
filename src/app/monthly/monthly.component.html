@@ -1,0 +1,101 @@
+<div style="padding: 20px;">
+    <mat-card>
+        <div fxFlex="100" fxLayoutAlign="space-around center" fxLayout="row wrap" fxLayoutGap="25px grid">
+
+            <div fxFlex="100">
+                <section fxLayout.md="100" fxLayout="row wrap" fxLayoutGap="25px grid" fxLayout.md="50"  fxLayoutAlign="space-around center">
+                    <mat-checkbox  *ngFor="let m of months" [value]="m" color= "primary"> {{m}}</mat-checkbox>
+                  </section>
+            </div>
+            <div fxFlex="25" fxLayout.md="33" fxLayout.lg="50"  fxFlex.lt-md="50" fxFlex.lt-sm="100"  fxLayoutAlign="center center">
+                <mat-form-field appearance="outline">
+                    <mat-label>Start Date</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div> 
+    
+            <div  fxFlex="25"  fxLayout.md="33" fxLayout.lg="50" fxFlex.lt-md="50" fxFlex.lt-sm="100" fxLayoutAlign="center center">
+                <mat-form-field appearance="outline">
+                    <mat-label>Frequency (every)</mat-label>
+                    <input matInput value="1" [(ngModel)]="frequency" type="number">
+                    <span matSuffix> &nbsp; Day(s)</span>
+                </mat-form-field>
+            </div>
+    
+            <div  fxFlex="25"  fxLayout.md="33" fxLayout.lg="50" fxFlex.lt-md="50" fxFlex.lt-sm="50" fxLayoutAlign="center center">
+                <mat-form-field  appearance="outline">
+                    <mat-label>Option</mat-label>
+                    <mat-select [(ngModel)]="defaultOptions" (valueChange)="setDefault()">
+                        <mat-option *ngFor="let s of select" [value]="s" >{{s}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+    
+            <div *ngIf="defaultOptions ==='On Going'" fxHide fxShow.gt-lg="" fxShow.lg="" fxShow.sm="" fxFlex="25" fxFlex.md="33" fxFlex.lt-md="50" fxFlex.fxFlex.lt-sm="100" fxLayoutAlign="center center">
+            </div>
+    
+            <div *ngIf="defaultOptions ==='End Date'" fxLayout.lg="50" fxFlex="25" fxLayout.md="33" fxFlex.lt-md="50" fxFlex.lt-sm="100" fxLayoutAlign="center center">
+                <mat-form-field appearance="outline">
+                    <mat-label>End Date</mat-label>
+                    <input matInput [matDatepicker]="picker1" 
+                    [matDatepickerFilter]="DateFilter" [(ngModel)]="endDate" 
+                    [min]="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                    <mat-error>Enter valid End Date</mat-error>
+                </mat-form-field>
+            </div>
+            
+            <div *ngIf="defaultOptions ==='Occurrence'" fxFlex="25"  fxLayout.md="33" fxFlex.lt-md="50" fxFlex.lt-sm="100" fxLayoutAlign="center center">
+                <mat-form-field appearce="outline">
+                    <mat-label>End after</mat-label>
+                    <input 
+                    matInput value="1" 
+                    [(ngModel)]="occurrence" 
+                    type="number">
+                    <span matSuffix>&nbsp; occurrence(s)</span>
+                </mat-form-field>
+            </div>
+
+            <div fxFlex="100" fxLayoutAlign="start start" fxLayoutAlign.lt-sm="space-around center">
+                <button mat-raised-button [disabled]=" startDate === null || !(frequency >= 1) 
+                    || (defaultOptions === 'End Date' && (endDate === null || endDate < startDate) ) 
+                    || (defaultOptions === 'Occurrence' && !(occurrence >= 1)) "
+                    (click) = "SelectDates()">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </mat-card>
+
+    <div>
+        <mat-toolbar color="primary">
+              <span> Results </span>
+        </mat-toolbar>
+        <mat-card>
+            <mat-card-content>
+               <div fxFlex="" fxLayout="column">
+                   <p *ngIf="date.length === 0 && selectedSelect !== 'On Going' && selectedSelect !==''">
+                        No Dates Generated
+                   </p>
+                   <p *ngIf="selectedSelect === 'On Going'">
+                        On Going
+                   </p> 
+                   <p *ngIf="selectedSelect === ''">
+                        No Dates till...
+                   </p>                      
+                   <div fxFlex="" fxLayout="row wrap" fxLayoutGap=" grid">
+                       <mat-chip-list *ngIf="date.length > 0 ">
+                            <div *ngFor="let d of date" fxFlexAlign= "start center">
+                                <mat-chip >{{d | date:'shortDate'}}</mat-chip>
+                            </div>
+                       </mat-chip-list>
+                   </div>
+               </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
